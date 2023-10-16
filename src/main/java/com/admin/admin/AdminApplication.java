@@ -26,15 +26,16 @@ public class AdminApplication {
 
 		return new BCryptPasswordEncoder();
 	}
-	@Bean
-	CommandLineRunner run(UserService userService){
-		return args -> {
-			userService.saveRole(new Role(null, "ROLE_USER"));
-			userService.saveRole(new Role(null, "ROLE_ADMIN"));
-			userService.saveUser(new Users("9989898989", "admin", "adminhehe@gmail.com","Thaitdv1415",new HashSet<>()));
-			userService.saveUser(new Users("2354514141", "admin123", "admin123@gmail.com","password",new HashSet<>()));
-			userService.addToUser("adminhehe@gmail.com","ROLE_ADMIN");
-			userService.addToUser("admin123@gmail.com","ROLE_USER");
-		};
-	}
+//	@Bean
+//	CommandLineRunner run(UserService user00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+//	Service){
+//		return args -> {
+//			userService.saveRole(new Role(null, "ROLE_USER"));
+//			userService.saveRole(new Role(null, "ROLE_ADMIN"));
+//			userService.saveUser(new Users("9989898989", "admin", "adminhehe@gmail.com","Thaitdv1415",new HashSet<>()));
+//			userService.saveUser(new Users("2354514141", "admin123", "admin123@gmail.com","password",new HashSet<>()));
+//			userService.addToUser("adminhehe@gmail.com","ROLE_ADMIN");
+//			userService.addToUser("admin123@gmail.com","ROLE_USER");
+//		};
+//	}
 }
