@@ -2,15 +2,13 @@ package com.admin.admin.controller;
 
 
 import com.admin.admin.model.Product;
+import com.admin.admin.repository.ProductCusRepo;
 import com.admin.admin.repository.ProductRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductRepository productRepository;
-
+    private final ProductCusRepo productCusRepo;
     @GetMapping
     public ResponseEntity<?> getAllProduct(){
         List<Product> products = productRepository.findAll();
@@ -42,12 +40,13 @@ public class ProductController {
     }
     @GetMapping("/getAllOrderByNameAsc")
     public ResponseEntity<?> getAllOrderByNameAsc(){
-        List<Product> products = productRepository.findByOrderByPriceAsc();
+        List<Product> products = productCusRepo.findByOrderByNameAsc();
         return ResponseEntity.ok(products);
     }
     @GetMapping("/getAllOrderByNameDesc")
     public ResponseEntity<?> getAllOrderByNameDesc(){
-        List<Product> products = productRepository.findByOrderByNameDesc();
+        List<Product> products = productCusRepo.findByOrderByNameDesc();
         return ResponseEntity.ok(products);
     }
+
 }

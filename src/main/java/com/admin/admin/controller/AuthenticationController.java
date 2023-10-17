@@ -17,7 +17,7 @@ import java.text.ParseException;
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest)throws GeneralException, ParseException {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
