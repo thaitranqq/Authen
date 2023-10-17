@@ -10,4 +10,5 @@ public interface UserService {
     void addToUser(String username, String rolename);
 
     void updatePassword(String email,String phone, String password);
+
 }

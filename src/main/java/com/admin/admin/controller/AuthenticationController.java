@@ -7,6 +7,8 @@ import com.admin.admin.service.AuthenticationService;
 import com.nimbusds.oauth2.sdk.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -16,7 +18,6 @@ import java.text.ParseException;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthenticationRequest authenticationRequest)throws GeneralException, ParseException {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
@@ -29,5 +30,11 @@ public class AuthenticationController {
     @PostMapping("/forgot-password")
     public String forgotpassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest)throws GeneralException, ParseException {
         return authenticationService.forgotpassword(forgotPasswordRequest.getEmail(), forgotPasswordRequest.getPhone());
+    }
+    @PostMapping("/test")
+    public ResponseEntity<?> test(String token){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return ResponseEntity.ok(username);
     }
 }
