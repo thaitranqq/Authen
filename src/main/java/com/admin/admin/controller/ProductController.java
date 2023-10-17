@@ -24,8 +24,8 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
     @GetMapping("/seacrhByName")
-    public ResponseEntity<?> getProductByName(@RequestParam String name){
-        List<Product> products = productRepository.findTop5ByNameContainingIgnoreCase(name);
+    public ResponseEntity<?> getProductByName(@RequestParam String q){
+        List<Product> products = productRepository.findTop5ByNameContainingIgnoreCase(q);
         return ResponseEntity.ok(products);
     }
     @GetMapping("/getAllOrderByPriceAsc")
