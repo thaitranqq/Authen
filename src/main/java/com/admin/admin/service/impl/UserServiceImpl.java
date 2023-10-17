@@ -53,11 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updatePassword(String email,String phone,String password) {
-        if(userRepository.findByEmailAndPhone(email,phone) == null){
-            throw new IllegalArgumentException("User with email and phone doesn't exists");
-        }
-        Users users = userRepository.findByEmailAndPhone(email, phone);
+    public void updatePassword(Users users,String password) {
         users.setPassword(passwordEncoder.encode(password));
         userRepository.save(users);
     }

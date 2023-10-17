@@ -78,8 +78,9 @@ public class AuthenticationService {
 
     public String forgotpassword(String email,String phone){
         try {
-            if (!userRepository.existsById(email)){
-                throw new IllegalArgumentException(email +" is not exist");
+            Users users = userRepository.findByEmailAndPhone(email,phone);
+            if (users == null){
+                throw new IllegalArgumentException("User with email "+email +" and phone "+phone+" is not exsist");
             }
             String password = RandomStringUtils.random(9,true,true);
             SimpleMailMessage message= new SimpleMailMessage();
@@ -89,7 +90,7 @@ public class AuthenticationService {
             message.setText("");
             message.setText("New password: "+password+"\n"+"Please change password after login sucess");
             mailSender.send(message);
-            userService.updatePassword(email,phone,password);
+            userService.updatePassword(users,password);
             return "Please check inbox email";
         }catch (Exception e){
             return e.getMessage();
