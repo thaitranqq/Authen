@@ -26,6 +26,7 @@ public class SecurityConfig {
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests()
                 .requestMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .requestMatchers("/api/v1/user/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/product/**").permitAll()
                 .requestMatchers("/api/v1/order/**").permitAll()
