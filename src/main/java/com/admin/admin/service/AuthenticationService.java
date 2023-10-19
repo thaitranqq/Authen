@@ -7,6 +7,7 @@ import com.admin.admin.model.Role;
 import com.admin.admin.model.Users;
 import com.admin.admin.repository.RoleCustomRepo;
 import com.admin.admin.repository.UserRepository;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,14 +34,27 @@ public class AuthenticationService {
     private final UserService userService;
     @Autowired
     private JavaMailSender mailSender;
+
     public ResponseEntity<?> register(RegisterRequest registerRequest){
         try {
             if(userRepository.existsById(registerRequest.getEmail().toString())){
                 throw new IllegalArgumentException("User with "+ registerRequest.getEmail()+"is exist");
             }
-            userService.saveUser(new Users(registerRequest.getPhone(),registerRequest.getUsername(),registerRequest.getEmail(),registerRequest.getPassword(),new HashSet<>()));
+            String otpEmail = RandomStringUtils.random(6,false,true);
+            System.out.println(otpEmail);
+            userService.saveUser(new Users(registerRequest.getPhone(),registerRequest.getUsername(),registerRequest.getEmail(),registerRequest.getPassword(),new HashSet<>(),otpEmail));
             userService.addToUser( registerRequest.getEmail(),"ROLE_USER");
             Users user = userRepository.findByEmail(registerRequest.getEmail()).orElseThrow();
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+            helper.setTo(registerRequest.getEmail());
+            helper.setSubject("Test");
+            helper.setText("""
+                        <div>
+                          <a href="http://localhost:8080/api/v1/auth/valicate-email?email=%s&otp=%s" target="_blank">click link to verify</a>
+                        </div>
+                        """.formatted(registerRequest.getEmail(), otpEmail), true);
+            mailSender.send(message);
             return ResponseEntity.ok(user);
         }catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -50,6 +65,9 @@ public class AuthenticationService {
     public ResponseEntity<?> authenticate(AuthenticationRequest authenticationRequest){
         try {
             Users users = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow(() -> new NoSuchElementException("User not found"));
+            if(!users.is_excuted()){
+                throw new NoSuchElementException("User is not valivate email");
+            }
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
             List<Role> role = null;
             if(users!=null){
@@ -82,12 +100,11 @@ public class AuthenticationService {
             if (users == null){
                 throw new IllegalArgumentException("User with email "+email +" and phone "+phone+" is not exsist");
             }
-            String password = RandomStringUtils.random(9,true,true);
+            String password = RandomStringUtils.random(12,true,true);
             SimpleMailMessage message= new SimpleMailMessage();
             message.setFrom("thaibs36@gmail.com");
             message.setTo(email);
             message.setSubject("Reset Password BirdShop");
-            message.setText("");
             message.setText("New password: "+password+"\n"+"Please change password after login sucess");
             mailSender.send(message);
             userService.updatePassword(users,password);
@@ -96,5 +113,20 @@ public class AuthenticationService {
             return e.getMessage();
         }
 
+    }
+
+    public String valicateEmail(String email,String otp){
+        try{
+            Users users = userRepository.findByEmailAndOtpEmail(email,otp);
+            if (users == null){
+                throw new IllegalArgumentException("Failed valicate");
+            }
+            users.setOtpEmail(null);
+            users.set_excuted(true);
+            userRepository.save(users);
+        }catch (Exception e){
+            return e.getMessage();
+        }
+        return "Valicate sucess";
     }
 }

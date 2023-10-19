@@ -21,6 +21,8 @@ public class Users implements UserDetails {
     private String password;
     private String email;
     private String phone;
+    private boolean is_excuted;
+    private String otpEmail;
     @ManyToMany
     @JoinTable(name = "user_role",
     joinColumns = @JoinColumn(name = "user_id"),
@@ -34,7 +36,18 @@ public class Users implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.is_excuted = false;
         this.roles = roles;
+    }
+    public Users(String phone, String username, String email, String password, Set<Role> roles,String otp){
+        this.user_id = email;
+        this.phone = phone;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.is_excuted = false;
+        this.roles = roles;
+        this.otpEmail = otp;
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
