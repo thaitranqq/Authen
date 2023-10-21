@@ -5,9 +5,15 @@ import com.admin.admin.auth.ForgotPasswordRequest;
 import com.admin.admin.auth.RegisterRequest;
 import com.admin.admin.service.AuthenticationService;
 import com.nimbusds.oauth2.sdk.GeneralException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.text.ParseException;
 
@@ -29,15 +35,13 @@ public class AuthenticationController {
     public String forgotpassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest)throws GeneralException, ParseException {
         return authenticationService.forgotpassword(forgotPasswordRequest.getEmail(), forgotPasswordRequest.getPhone());
     }
-//    @PostMapping("/test")
-//    public ResponseEntity<?> test(String token){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//        return ResponseEntity.ok(username);
-//    }
     @GetMapping("/valicate-email")
-    public String valicatEmail(@RequestParam String email,
+    public RedirectView  valicatEmail(@RequestParam String email,
                                @RequestParam String otp){
-        return authenticationService.valicateEmail(email,otp);
+        String status = authenticationService.valicateEmail(email,otp);
+        if(status.endsWith("Valicate sucess")){
+            return new RedirectView("http://localhost:3000/LoginPage");
+        }
+        return new RedirectView("http://localhost:3000/RegisterPage");
     }
 }

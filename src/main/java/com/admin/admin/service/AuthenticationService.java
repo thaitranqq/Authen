@@ -38,17 +38,17 @@ public class AuthenticationService {
     public ResponseEntity<?> register(RegisterRequest registerRequest){
         try {
             if(userRepository.existsById(registerRequest.getEmail().toString())){
-                throw new IllegalArgumentException("User with "+ registerRequest.getEmail()+"is exist");
+                throw new IllegalArgumentException("User with "+ registerRequest.getEmail()+" is exist");
             }
             String otpEmail = RandomStringUtils.random(6,false,true);
             System.out.println(otpEmail);
             userService.saveUser(new Users(registerRequest.getPhone(),registerRequest.getUsername(),registerRequest.getEmail(),registerRequest.getPassword(),new HashSet<>(),otpEmail));
-            userService.addToUser( registerRequest.getEmail(),"ROLE_USER");
+            userService.addToUser( registerRequest.getEmail(),"USER");
             Users user = userRepository.findByEmail(registerRequest.getEmail()).orElseThrow();
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message);
             helper.setTo(registerRequest.getEmail());
-            helper.setSubject("Test");
+            helper.setSubject("Validate Account BirdShop");
             helper.setText("""
                         <div>
                           <a href="http://localhost:8080/api/v1/auth/valicate-email?email=%s&otp=%s" target="_blank">click link to verify</a>
