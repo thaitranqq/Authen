@@ -5,9 +5,7 @@ import com.admin.admin.model.Product;
 import com.admin.admin.repository.ProductCusRepo;
 import com.admin.admin.repository.ProductRepository;
 import com.admin.admin.service.ProductService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
