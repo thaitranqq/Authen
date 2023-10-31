@@ -35,8 +35,8 @@ public class AuthenticationController {
                                @RequestParam String otp){
         String status = authenticationService.valicateEmail(email,otp);
         if(status.endsWith("Valicate sucess")){
-            return new RedirectView("http://localhost:3000/LoginPage");
+            return new RedirectView("http://localhost:3000/login");
         }
-        return new RedirectView("http://localhost:3000/RegisterPage");
+        return new RedirectView("http://localhost:3000/register");
     }
 }
