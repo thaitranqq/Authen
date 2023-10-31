@@ -1,10 +1,8 @@
 package com.admin.admin.service.impl;
 
 import com.admin.admin.model.*;
-import com.admin.admin.repository.AddressRepository;
-import com.admin.admin.repository.OrderDetailRepository;
-import com.admin.admin.repository.OrderItemRepository;
-import com.admin.admin.repository.ProductRepository;
+import com.admin.admin.repository.*;
+import com.admin.admin.service.MailService;
 import com.admin.admin.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -14,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 @Service
@@ -26,11 +26,20 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     @Autowired
     private final AddressRepository addressRepository;
+    @Autowired
+    private final MailService mailService;
+    @Autowired
+    private final UserRepository userRepository;
     @Override
     public ResponseEntity<?> addOrder(OrderRequest orderRequest) {
         try {
+            MailOrderInfor orderInfor = new MailOrderInfor();
             OrderResponse response = new OrderResponse();
             String id = orderRequest.getAddress().getUser_id();
+            Optional<Users> users = userRepository.findByEmail(id);
+            users.stream().forEach(users1 -> {
+                orderInfor.setName(users1.getUsername());
+            });
             String idOrder = RandomStringUtils.random(5,true,true);
             float[] total={0};
             for(DataOrderRequest i : orderRequest.getDataOrderRequests()){
@@ -40,6 +49,7 @@ public class OrderServiceImpl implements OrderService {
                     total[0] += price;
                 });
             }
+            orderInfor.setTotal(total[0]);
             OrderDetail orderDetail = new OrderDetail(idOrder ,
                     orderRequest.getAddress().getAddress_id(),
                     id,
@@ -53,11 +63,19 @@ public class OrderServiceImpl implements OrderService {
             response.setTotal(total[0]);
             Optional<Address> address = addressRepository.findById(orderRequest.getAddress().getAddress_id());
             address.stream().forEach(address1 -> {
+                orderInfor.setAddress(address1.getAddress_shipping());
+                orderInfor.setPhone(address1.getPhone());
                 response.setAddress(address1);
             });
+            List<OrderMailProductRespone> productList = new ArrayList<>();
             for(DataOrderRequest i : orderRequest.getDataOrderRequests()){
                 Optional<Product> priceProduct = productRepository.findById(i.getId());
+                OrderMailProductRespone mailProductRespone = new OrderMailProductRespone();
                 priceProduct.stream().forEach(product -> {
+                    mailProductRespone.setName(product.getName());
+                    mailProductRespone.setQuality(i.getValue());
+                    mailProductRespone.setPrice(i.getValue()*product.getPrice());
+                    productList.add(mailProductRespone);
                     orderItemRepository.save(new OrderItem(idOrder,
                             i.getId(),
                             i.getValue(),
@@ -65,6 +83,9 @@ public class OrderServiceImpl implements OrderService {
                     ));
                 });
             }
+            orderInfor.setProductList(productList);
+            orderInfor.setEmail(orderRequest.getAddress().getEmail());
+            mailService.sendemail(orderInfor);
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.ok(e.getMessage());

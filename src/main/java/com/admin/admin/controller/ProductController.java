@@ -23,6 +23,10 @@ public class ProductController {
         List<Product> products = productRepository.findAll();
         return ResponseEntity.ok(products);
     }
+    @GetMapping("/count")
+    public ResponseEntity<?> countProduct(){
+        return ResponseEntity.ok(productRepository.count());
+    }
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody Product product){
         try {

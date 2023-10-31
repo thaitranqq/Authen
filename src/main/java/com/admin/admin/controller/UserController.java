@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.sound.midi.Soundbank;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +38,7 @@ public class UserController {
     @PostMapping("/change-profile")
     public ResponseEntity<?> changeProfile(@RequestParam String token,
                                         @RequestParam String username,
+                                        @RequestParam String oldPassword,
                                         @RequestParam String password){
         try{
             Claims claims = Jwts.parser()
@@ -44,14 +47,16 @@ public class UserController {
                     .getBody();
             String id = claims.getSubject();
             Optional<Users> users1 = userRepository.findByEmail(id);
-            System.out.println(id);
             if(!users1.isPresent()){
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Faild");
             }
             users1.stream().forEach(users2 -> {
-                System.out.println(users2.toString());
-                users2.setPassword(passwordEncoder.encode(password));
-                users2.setUsername(username);
+                if(!username.equals("")){
+                    users2.setUsername(username);
+                }
+                if(passwordEncoder.matches(oldPassword,users2.getPassword())){
+                    users2.setPassword(passwordEncoder.encode(password));
+                }
                 userRepository.save(users2);
             });
         }catch (Exception e){
