@@ -27,6 +27,17 @@ public class ProductController {
     public ResponseEntity<?> countProduct(){
         return ResponseEntity.ok(productRepository.count());
     }
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteProduct(@RequestParam Long id){
+        try {
+            productRepository.deleteById(id);
+            return ResponseEntity.ok("200");
+        }catch (Exception e){
+            return ResponseEntity.ok(e.getMessage());
+
+        }
+
+    }
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody Product product){
         try {
@@ -65,5 +76,11 @@ public class ProductController {
     @PostMapping("/changePost")
     public boolean changePost(Long id){
         return productService.setIsPost(id);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProduct(@RequestParam Long id,
+                                           @RequestBody Product product){
+        return ResponseEntity.ok(productService.updateProduct(id,product));
     }
 }

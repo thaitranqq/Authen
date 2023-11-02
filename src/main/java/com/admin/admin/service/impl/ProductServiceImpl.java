@@ -3,7 +3,9 @@ package com.admin.admin.service.impl;
 import com.admin.admin.model.Product;
 import com.admin.admin.repository.ProductRepository;
 import com.admin.admin.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,5 +31,19 @@ public class ProductServiceImpl implements ProductService {
         }catch (Exception e){
             return false;
         }
+    }
+
+    @Override
+    public ResponseEntity<?> updateProduct(Long productID, Product updatedProduct) {
+        Product existingProduct = productRepository.findById(productID)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + productID));
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setDescription(updatedProduct.getDescription());
+        existingProduct.setAmount(updatedProduct.getAmount());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setProduct_image(updatedProduct.getProduct_image());
+        existingProduct.setIs_customer(updatedProduct.getIs_customer());
+        existingProduct.setIs_post(updatedProduct.getIs_post());
+        return ResponseEntity.ok(productRepository.save(existingProduct));
     }
 }

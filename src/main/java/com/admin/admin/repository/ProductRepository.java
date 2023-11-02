@@ -10,4 +10,5 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
     List<Product> findTop5ByNameContainingIgnoreCase(String name);
     List<Product> findByOrderByPriceAsc();
     List<Product> findByOrderByPriceDesc();
+
 }

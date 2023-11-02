@@ -21,7 +21,7 @@ public class OrderDetail {
     @Id
     private String id;
     private Long address_id;
-    private String user_id;
+    private String userid;
     private String shipping_address;
     private LocalDateTime orderdate;
     private String payment_method;
@@ -31,7 +31,7 @@ public class OrderDetail {
     public OrderDetail(String id, Long address_id, String user_id, String shipping_address, LocalDateTime order_date, String payment_method, float order_total, int order_status) {
         this.id = id;
         this.address_id = address_id;
-        this.user_id = user_id;
+        this.userid = user_id;
         this.shipping_address = shipping_address;
         this.orderdate = order_date;
         this.payment_method = payment_method;

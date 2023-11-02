@@ -31,4 +31,8 @@ public class OrderController {
     public boolean changeStatus(@RequestParam String id){
         return orderService.setStatus(id);
     }
+    @GetMapping("/getOrderByUserID")
+    public ResponseEntity<?> getOrderByID(@RequestParam String id){
+        return orderService.getOrderByUserID(id);
+    }
 }

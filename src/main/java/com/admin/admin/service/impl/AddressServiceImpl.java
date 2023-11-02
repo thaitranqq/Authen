@@ -26,8 +26,7 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public ResponseEntity<?> getAddressByUserId(String id) {
         try {
-            addressRepository.deleteByUserid(id);
-            return ResponseEntity.ok("200");
+            return ResponseEntity.ok(addressRepository.getAddressByUserid(id));
         }catch (Exception e){
             return ResponseEntity.ok(e.getMessage());
         }

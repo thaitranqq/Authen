@@ -4,6 +4,7 @@ import com.admin.admin.model.*;
 import com.admin.admin.repository.*;
 import com.admin.admin.service.MailService;
 import com.admin.admin.service.OrderService;
+import jakarta.persistence.criteria.Order;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,4 +125,21 @@ public class OrderServiceImpl implements OrderService {
             return false;
         }
     }
+
+    @Override
+    public ResponseEntity<?> getOrderByUserID(String id) {
+        List<OrderDataRespone> dataRespones = new ArrayList<>();
+        List<OrderDetail> orderDetails = orderDetailRepository.findByUserid(id);
+        OrderDataRespone orderDataRespone = null;
+        for (OrderDetail orderDetail : orderDetails
+        ) {
+            orderDataRespone = new OrderDataRespone();
+            orderDataRespone.setOrderDetail(orderDetail);
+            List<OrderItem> orderItemList = orderItemRepository.findByOrderdetailid(orderDetail.getId());
+            orderDataRespone.setOrderItemList(orderItemList);
+            dataRespones.add(orderDataRespone);
+        }
+        return ResponseEntity.ok(dataRespones);
+    }
+
 }

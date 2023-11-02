@@ -11,4 +11,5 @@ public interface OrderService {
     ResponseEntity<?> addOrder(OrderRequest orderRequest);
     ResponseEntity<?> getOrderByDate(LocalDateTime startDate, LocalDateTime endDate);
     boolean setStatus(String id);
+    ResponseEntity<?> getOrderByUserID(String id);
 }
