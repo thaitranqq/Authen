@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/comment/**").permitAll()
                 .requestMatchers("/api/v1/product/**").permitAll()
                 .requestMatchers("/api/v1/order/**").permitAll()
+                .requestMatchers("/api/v1/dashboard/**").permitAll()
                 .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                 .requestMatchers("/user/**").hasAnyAuthority("ADMIN","USER")
                 .and()
