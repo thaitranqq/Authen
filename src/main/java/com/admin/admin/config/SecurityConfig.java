@@ -29,6 +29,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/user/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/address/**").permitAll()
+                .requestMatchers("/api/v1/comment/**").permitAll()
                 .requestMatchers("/api/v1/product/**").permitAll()
                 .requestMatchers("/api/v1/order/**").permitAll()
                 .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")

@@ -25,6 +25,7 @@ public class ProductController {
     }
     @GetMapping("/count")
     public ResponseEntity<?> countProduct(){
+
         return ResponseEntity.ok(productRepository.count());
     }
     @PostMapping("/delete")
@@ -41,6 +42,8 @@ public class ProductController {
     @PostMapping("/add")
     public ResponseEntity<?> addProduct(@RequestBody Product product){
         try {
+            product.setIs_post(true);
+            product.setIs_customer(false);
             productRepository.save(product);
             return ResponseEntity.ok("Add sucess");
         }catch (Exception e){

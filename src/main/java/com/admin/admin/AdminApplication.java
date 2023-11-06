@@ -27,7 +27,7 @@ public class AdminApplication {
 		return new BCryptPasswordEncoder();
 	}
 //	@Bean
-//	CommandLineRunner run(UserService user00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+//	CommandLineRunner run(UserService user
 //	Service){
 //		return args -> {
 //			userService.saveRole(new Role(null, "ROLE_USER"));
