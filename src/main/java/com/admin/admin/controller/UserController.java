@@ -30,7 +30,10 @@ public class UserController {
     public List<UsersRequest> getAll(){
         return userCusRepo.findAllUsers();
     }
-
+    @GetMapping("/count")
+    public int countUser(){
+        return (int) userRepository.count();
+    }
     @GetMapping("/profile")
     public List<UsersRequest> getAll(@RequestParam String id){
         return userCusRepo.findUserById(id) ;
