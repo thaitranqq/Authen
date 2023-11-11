@@ -11,4 +11,6 @@ import java.util.List;
 public interface OrderDetailRepository extends JpaRepository<OrderDetail,String> {
     List<OrderDetail> findByOrderdateBetween(LocalDateTime startDate, LocalDateTime endDate);
     List<OrderDetail> findByUserid(String id);
+
+    List<OrderDetail> findOrderDetailsByOrderdate(LocalDateTime dateTime);
 }

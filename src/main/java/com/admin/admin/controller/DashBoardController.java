@@ -1,9 +1,6 @@
 package com.admin.admin.controller;
 
-import com.admin.admin.model.CategoryChartReponse;
-import com.admin.admin.model.OrderDetail;
-import com.admin.admin.model.OrderItem;
-import com.admin.admin.model.Product;
+import com.admin.admin.model.*;
 import com.admin.admin.repository.OrderDetailRepository;
 import com.admin.admin.repository.OrderItemRepository;
 import com.admin.admin.repository.ProductRepository;
@@ -11,11 +8,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -84,4 +84,47 @@ public class DashBoardController {
         CategoryChartReponse categoryChartReponse = new CategoryChartReponse(wood,metal);
         return ResponseEntity.ok(categoryChartReponse);
     }
+
+//
+        @GetMapping("/week")
+        public ResponseEntity<?> getSalesWeek(@RequestParam int year,
+                                              @RequestParam int month){
+            List<SaleChartWeekResponse> responses = new ArrayList<>();
+            LocalDateTime firstDayOfMonth = LocalDateTime.of(year, month, 1, 0, 0);
+            LocalDateTime lastDayOfMonth = firstDayOfMonth.with(TemporalAdjusters.lastDayOfMonth());
+            LocalDateTime startOfWeek = firstDayOfMonth.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+            while (startOfWeek.isBefore(lastDayOfMonth) || startOfWeek.isEqual(lastDayOfMonth)) {
+                Map<String, Float> map = new HashMap<>();
+                map.put("Monday", (float) 0);
+                map.put("Tuesday", (float) 0);
+                map.put("Wednesday", (float) 0);
+                map.put("Thursday", (float) 0);
+                map.put("Friday", (float) 0);
+                map.put("Saturday", (float) 0);
+                map.put("Sunday", (float) 0);
+                LocalDateTime endOfWeek = startOfWeek.with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+                SaleChartWeekResponse weekResponse = new SaleChartWeekResponse();
+                weekResponse.setStartOfDay(startOfWeek);
+                weekResponse.setEndOfDay(endOfWeek);
+                List<SaleChartResponse> saleChartResponses = new ArrayList<>();
+                List<OrderDetail> orderDetailList = orderDetailRepository.findByOrderdateBetween(startOfWeek,endOfWeek.plusDays(1));
+                for (OrderDetail detail:orderDetailList
+                     ) {
+                    String dayOfWeekString =  detail.getOrderdate().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+                    float value = map.get(dayOfWeekString);
+                    value = value + detail.getOrder_total();
+                    map.put(dayOfWeekString,value);
+                }
+                for (Map.Entry<String, Float> entry : map.entrySet()) {
+                    SaleChartResponse chartResponse = new SaleChartResponse();
+                    chartResponse.setDay(entry.getKey());
+                    chartResponse.setSaleOfDay(entry.getValue());
+                    saleChartResponses.add(chartResponse);
+                }
+                weekResponse.setResponses(saleChartResponses);
+                responses.add(weekResponse);
+                startOfWeek = startOfWeek.plusWeeks(1);
+            }
+            return ResponseEntity.ok(responses);
+        }
 }
