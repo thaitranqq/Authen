@@ -23,7 +23,7 @@ public class CommentController {
     public ResponseEntity<?> addComment(@RequestBody Comment comment){
         return ResponseEntity.ok(commentService.addComment(comment));
     }
-    @PutMapping()
+    @DeleteMapping
     public ResponseEntity<?> deleteComment(@RequestParam Long id){
         return ResponseEntity.ok(commentService.deleteComment(id));
     }
