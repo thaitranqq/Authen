@@ -27,4 +27,9 @@ public class CommentServiceImpl implements CommentService {
             return false;
         }
     }
+
+    @Override
+    public List<Comment> getAll() {
+        return commentRepository.findAll();
+    }
 }

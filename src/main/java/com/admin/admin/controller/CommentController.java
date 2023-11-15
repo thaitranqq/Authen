@@ -15,6 +15,10 @@ public class CommentController {
     public ResponseEntity<?> getCommentByProduct(@RequestParam Long id){
         return ResponseEntity.ok(commentService.getCommentByProduct(id));
     }
+    @GetMapping("getAll")
+    public ResponseEntity<?> getAll(){
+        return ResponseEntity.ok(commentService.getAll());
+    }
     @PostMapping("/add")
     public ResponseEntity<?> addComment(@RequestBody Comment comment){
         return ResponseEntity.ok(commentService.addComment(comment));

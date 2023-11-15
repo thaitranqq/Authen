@@ -9,4 +9,5 @@ import java.util.List;
 public interface CommentService {
     List<Comment> getCommentByProduct(Long id);
     boolean addComment(Comment comment);
+    List<Comment> getAll();
 }
