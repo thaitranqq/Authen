@@ -68,6 +68,9 @@ public class AuthenticationService {
             if(!users.is_excuted()){
                 throw new NoSuchElementException("User is not valivate email");
             }
+            if (users.getStatus() == 0){
+                throw new NoSuchElementException("Account is block");
+            }
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
             List<Role> role = null;
             if(users!=null){

@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.Soundbank;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -66,5 +66,26 @@ public class UserController {
             return ResponseEntity.ok(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Succes");
+    }
+    @PostMapping("/setStatus")
+    public ResponseEntity<?> setStatus(@RequestParam String id){
+        try {
+            AtomicReference<String> status= new AtomicReference<>("");
+            Optional<Users> users = userRepository.findByEmail(id);
+            users.stream().forEach(users1 -> {
+                if (users1.getStatus() == 1) {
+                    users1.setStatus(0);
+                    status.set("Set account is block status");
+                } else {
+                    users1.setStatus(1);
+                    status.set("Unlock account is success");
+                }
+                userRepository.save(users1);
+            });
+            return ResponseEntity.ok(status);
+        }catch (Exception e){
+            return ResponseEntity.ok(e.getMessage());
+        }
+
     }
 }
