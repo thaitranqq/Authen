@@ -10,4 +10,5 @@ public interface CommentService {
     List<Comment> getCommentByProduct(Long id);
     boolean addComment(Comment comment);
     List<Comment> getAll();
+    boolean deleteComment(Long id);
 }

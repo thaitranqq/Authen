@@ -32,4 +32,15 @@ public class CommentServiceImpl implements CommentService {
     public List<Comment> getAll() {
         return commentRepository.findAll();
     }
+
+    @Override
+    public boolean deleteComment(Long id) {
+        try {
+            commentRepository.deleteById(id);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
+
+    }
 }
