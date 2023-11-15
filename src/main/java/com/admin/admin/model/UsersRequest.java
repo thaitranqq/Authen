@@ -13,8 +13,8 @@ import lombok.Setter;
 public class UsersRequest {
     private String user_id;
     private String username;
-    private String password;
     private String email;
     private String phone;
     private boolean is_excuted;
+    private int status;
 }

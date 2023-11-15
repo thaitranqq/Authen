@@ -18,13 +18,14 @@ public class UserCusRepo {
 
     public List<UsersRequest> findAllUsers(){
         StringBuilder sql = new StringBuilder()
-                .append("select users.user_id,users.username,users.email,users.phone,users.is_excuted from users");
+                .append("select users.user_id,users.username,users.email,users.phone,users.is_excuted,users.status from users");
         NativeQuery<UsersRequest> query = ((Session)entityManager.getDelegate()).createNativeQuery(sql.toString());
         query.addScalar("user_id", StandardBasicTypes.STRING);
         query.addScalar("username", StandardBasicTypes.STRING);
         query.addScalar("email", StandardBasicTypes.STRING);
         query.addScalar("phone", StandardBasicTypes.STRING);
         query.addScalar("is_excuted", StandardBasicTypes.BOOLEAN);
+        query.addScalar("status", StandardBasicTypes.INTEGER);
         query.setResultTransformer(Transformers.aliasToBean(UsersRequest.class));
         return query.list();
     }
